@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة أجور نقل البضائع والشحن - القرار 7625</title>
+    <style>
+        :root {
+            --primary-color: #1b365d;
+            --secondary-color: #2b78e4;
+            --accent-color: #d97706;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .section-title {
+            background-color: #eef4fb;
+            color: var(--primary-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--secondary-color);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 5px rgba(43, 120, 228, 0.3);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+
+        .btn-calc:hover {
+            background-color: #1d5cb8;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            display: none;
+        }
+
+        .result-box.active {
+            display: block;
+        }
+
+        .total-price {
+            font-size: 26px;
+            color: #15803d;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #dcfce7;
+            border-radius: 8px;
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .details-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #cbd5e1;
+            font-size: 14px;
+        }
+
+        .notes-card {
+            background-color: #fffbebf;
+            border-right: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>حاسبة أجور نقل البضائع والشحن</h1>
+        <p>وفقاً للقرار الرسمي رقم 7625 الصادر عن وزارة الاقتصاد والصناعة[span_0](start_span)[span_0](end_span)</p>
+    </div>
+
+    <!-- 1. معلومات النقل الأساسية -->
+    <div class="section-title">1. البيانات الأساسية للنقل والوزن</div>
+    <div class="grid">
+        <div class="form-group">
+            <label for="distance">المسافة الكيلومترية (كم):</label>
+            <input type="number" id="distance" min="1" placeholder="أدخل المسافة المقطوعة">
+        </div>
+        <div class="form-group">
+            <label for="weight">الحمولة المحورية / الفعلية (بالطن):</label>
+            <input type="number" id="weight" step="0.1" min="0.1" placeholder="وزن البضاعة بالطن">
+        </div>
+    </div>
+
+    <!-- 2. طبيعة الطريق والمسار -->
+    <div class="section-title">2. طبيعة الطريق والمسار الفارغ</div>
+    <div class="checkbox-group">
+        <input type="checkbox" id="unpaved">
+        <label for="unpaved">مرور على أقسام غير معبدة من الطريق (تضاف نسبة 20%)[span_1](start_span)[span_1](end_span)</label>
+    </div>
+    
+    <div class="grid" style="margin-top: 10px;">
+        <div class="form-group">
+            <label for="emptyReturn">حالات التوجه والعودة فارغ:</label>
+            <select id="emptyReturn">
+                <option value="none">لا يوجد (نقل عادي محمل)</option>
+                <option value="destToOffice">عودة فارغة من المقصد إلى مكتب النقل بالمحافظة (+30%)[span_2](start_span)[span_2](end_span)</option>
+                <option value="originToOffice">عودة فارغة لسبب لا يد للسائق فيه إلى مكتب الانطلاق (+35%)[span_3](start_span)[span_3](end_span)</option>
+                <option value="provToProv">توجه الشاحنة فارغة من محافظة إلى أخرى (+25%)[span_4](start_span)[span_4](end_span)</option>
+                <option value="officeToLoad">توجه الشاحنة فارغة من مكتب النقل بالمحافظة إلى مكان التحميل (+30%)[span_5](start_span)[span_5](end_span)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="otherOffice">التوجه من مكتب تنظيم آخر / الحدود الإدارية:</label>
+            <select id="otherOffice">
+                <option value="none">لا يوجد</option>
+                <option value="otherOfficeReq">توجيه الشاحنة من مكتب غير الموجود بمركز المحافظة (+25%)[span_6](start_span)[span_6](end_span)</option>
+                <option value="adminBorder">نقل من مكان ضمن الحدود الإدارية لمحافظة أخرى (+25%)[span_7](start_span)[span_7](end_span)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 3. تصنيف ونوع البضاعة -->
+    <div class="section-title">3. تصنيف ونوع البضاعة والحمولات</div>
+    <div class="grid">
+        <div class="form-group">
+            <label for="cargoType">نوع البضاعة الخاص:</label>
+            <select id="cargoType">
+                <option value="normal">بضائع عادية / قياسية</option>
+                <option value="dangerous">حمولات خطرة (سريعة الاشتعال، محروقات، قطن، حمض...) (+30%)[span_8](start_span)[span_8](end_span)</option>
+                <option value="animals">حمولات ذات طبيعة خاصة (حيوانات...) (+50%)[span_9](start_span)[span_9](end_span)</option>
+                <option value="perishableBulk">حمولات قابلة للتلف - خضروات وشوندور (دوكمة) (+30%)[span_10](start_span)[span_10](end_span)</option>
+                <option value="perishablePacked">حمولات قابلة للتلف - خضروات وشوندور (معبأ) (+20%)[span_11](start_span)[span_11](end_span)</option>
+                <option value="woodenReiter">إعادة الفوارغ الخشبية والمعدنية (+50%)[span_12](start_span)[span_12](end_span)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="heavyCargo">المثقلات (قطعة واحدة زنة 10 إلى 60 طن):</label>
+            <select id="heavyCargo">
+                <option value="0">ليست من المثقلات</option>
+                <option value="25">مثقلة من 10 إلى 15 طن (+25%)[span_13](start_span)[span_13](end_span)</option>
+                <option value="40">مثقلة من 16 إلى 20 طن (+40%)[span_14](start_span)[span_14](end_span)</option>
+                <option value="75">مثقلة من 21 إلى 45 طن (+75%)[span_15](start_span)[span_15](end_span)</option>
+                <option value="120">مثقلة من 46 إلى 60 طن (+120%)[span_16](start_span)[span_16](end_span)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid" style="margin-top: 10px;">
+        <div class="checkbox-group">
+            <input type="checkbox" id="abnormalDim">
+            <label for="abnormalDim">حمولات شاذة الأبعاد (تتجاوز أبعاد الصندوق أو ارتفاع 4م) (+15%)[span_17](start_span)[span_17](end_span)</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="craneNeeded">
+            <label for="craneNeeded">حمولات تحتاج لروافع للتحميل والتفريغ (خيش، نخالة...) (+20%)[span_18](start_span)[span_18](end_span)</label>
+        </div>
+    </div>
+
+    <!-- 4. الحاويات وبدل التعطيل -->
+    <div class="section-title">4. الحاويات وبدل التعطيل</div>
+    <div class="grid">
+        <div class="form-group">
+            <label for="containerType">نقل الحاويات:</label>
+            <select id="containerType">
+                <option value="none">لا يوجد حاوية</option>
+                <option value="standard">حاوية عادية (+6.04 ل.س/طن)[span_19](start_span)[span_19](end_span)</option>
+                <option value="standardReturn">حاوية عادية مع إعادة الحاوية فارغة (+6.04 ل.س/طن و +50% للأجور)[span_20](start_span)[span_20](end_span)</option>
+                <option value="oversized">حاوية متجاوزة الأبعاد (ارتفاع > 4م أو أبعاد الصندوق) (+7.56 ل.س/طن)[span_21](start_span)[span_21](end_span)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="delayDays">بدل التعطيل اليومي (>50 كم):</label>
+            <input type="number" id="delayDays" min="0" value="0" placeholder="عدد أيام التوقف (بعد 24 ساعة)">
+        </div>
+        <div class="form-group">
+            <label for="delayHours">بدل ساعات التوقف (<=50 كم):</label>
+            <input type="number" id="delayHours" min="0" max="4" value="0" placeholder="عدد الساعات (أقصى حد 4)">
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculateFreight()">حساب الأجرة التفصيلية</button>
+
+    <!-- عرض النتائج -->
+    <div class="result-box" id="resultBox">
+        <div class="total-price" id="totalPrice">0 ل.س</div>
+        <h3>تفاصيل العمليات الحسابية:</h3>
+        <ul class="details-list" id="detailsList"></ul>
+    </div>
+
+    <!-- تنبيهات عامة -->
+    <div class="notes-card">
+        <strong>📌 تنبيهات وقواعد القرار الرسمية:</strong>
+        <ul>
+            <li>تستوفى التعرفة بطريقة <b>التراكم الشرائحي</b> للطن/كم[span_22](start_span)[span_22](end_span).</li>
+            <li>تسري على جميع الشاحنات التي يتجاوز وزنها القائم 3500 كغ (باستثناء البضائع المعدة للتصدير فهي خاضعة للعرض والطلب)[span_23](start_span)[span_23](end_span).</li>
+            <li>أجور التحميل، التفريغ، التستيف، التبريز، والقبان تقع على عاتق صاحب المنقولات[span_24](start_span)[span_24](end_span).</li>
+            <li>إذا قدمت الجهة المستخدمة المحروقات والزيوت، تنزل قيمتها الرسمية من أصل الاستحقاق[span_25](start_span)[span_25](end_span).</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function calculateFreight() {
+        const distance = parseFloat(document.getElementById('distance').value);
+        const weight = parseFloat(document.getElementById('weight').value);
+
+        if (!distance || distance <= 0 || !weight || weight <= 0) {
+            alert("يرجى إدخال المسافة والوزن بشكل صحيح!");
+            return;
+        }
+
+        let details = [];
+        
+        // 1. حساب الأجرة الأساسية بالتراكم الشرائحي (المادة 1)[span_26](start_span)[span_26](end_span)
+        let baseRatePerTon = 0;
+
+        if (distance <= 15) {
+            baseRatePerTon = 499;
+        } else if (distance <= 50) {
+            baseRatePerTon = 499 + (distance - 15) * 14.95;
+        } else if (distance <= 100) {
+            baseRatePerTon = 499 + (35 * 14.95) + (distance - 50) * 13.3;
+        } else if (distance <= 150) {
+            baseRatePerTon = 499 + (35 * 14.95) + (50 * 13.3) + (distance - 100) * 9.14;
+        } else {
+            baseRatePerTon = 499 + (35 * 14.95) + (50 * 13.3) + (50 * 9.14) + (distance - 150) * 6.8;
+        }
+
+        let baseTotal = baseRatePerTon * weight;
+        details.push({ label: "الأجرة الأساسية للطن (تراكمي)", value: baseRatePerTon.toFixed(2) + " ل.س/طن" });
+        details.push({ label: "إجمالي الأجرة الأساسية للكمية", value: baseTotal.toFixed(2) + " ل.س" });
+
+        // 2. حساب النسب الإضافية
+        let totalPercentage = 0;
+
+        // الطرق غير المعبدة (المادة 6)[span_27](start_span)[span_27](end_span)
+        if (document.getElementById('unpaved').checked) {
+            totalPercentage += 20;
+            details.push({ label: "إضافة طريق غير معبد", value: "+20%" });
+        }
+
+        // عودة وتوجه فارغ (المادة 14)[span_28](start_span)[span_28](end_span)
+        const emptyReturn = document.getElementById('emptyReturn').value;
+        if (emptyReturn === 'destToOffice') { totalPercentage += 30; details.push({ label: "عودة فارغة للمكتب بالمحافظة", value: "+30%" }); }
+        else if (emptyReturn === 'originToOffice') { totalPercentage += 35; details.push({ label: "عودة فارغة لمكتب الانطلاق لسبب قهري", value: "+35%" }); }
+        else if (emptyReturn === 'provToProv') { totalPercentage += 25; details.push({ label: "توجه فارغ بين المحافظات", value: "+25%" }); }
+        else if (emptyReturn === 'officeToLoad') { totalPercentage += 30; details.push({ label: "توجه فارغ من المكتب للتحميل", value: "+30%" }); }
+
+        // التوجيه من مكاتب أخرى (المادة 7 و 8)[span_29](start_span)[span_29](end_span)
+        const otherOffice = document.getElementById('otherOffice').value;
+        if (otherOffice === 'otherOfficeReq') { totalPercentage += 25; details.push({ label: "توجيه من مكتب خارج مركز المحافظة", value: "+25%" }); }
+        else if (otherOffice === 'adminBorder') { totalPercentage += 25; details.push({ label: "نقل ضمن الحدود الإدارية لمحافظة أخرى", value: "+25%" }); }
+
+        // نوع البضاعة (المواد 16, 18, 19)[span_30](start_span)[span_30](end_span)
+        const cargoType = document.getElementById('cargoType').value;
+        if (cargoType === 'dangerous') { totalPercentage += 30; details.push({ label: "حمولات خطرة", value: "+30%" }); }
+        else if (cargoType === 'animals') { totalPercentage += 50; details.push({ label: "حيوانات/طبيعة خاصة", value: "+50%" }); }
+        else if (cargoType === 'perishableBulk') { totalPercentage += 30; details.push({ label: "مواد قابلة للتلف (دوكمة)", value: "+30%" }); }
+        else if (cargoType === 'perishablePacked') { totalPercentage += 20; details.push({ label: "مواد قابلة للتلف (معبأ)", value: "+20%" }); }
+        else if (cargoType === 'woodenReiter') { totalPercentage += 50; details.push({ label: "إعادة الفوارغ الخشبية والمعدنية", value: "+50%" }); }
+
+        // المثقلات (المادة 20)[span_31](start_span)[span_31](end_span)
+        const heavyCargo = parseFloat(document.getElementById('heavyCargo').value);
+        if (heavyCargo > 0) {
+            totalPercentage += heavyCargo;
+            details.push({ label: "إضافة أحمال مثقلة", value: `+${heavyCargo}%` });
+        }
+
+        // حمولات شاذة وروافع (المادة 18)[span_32](start_span)[span_32](end_span)
+        if (document.getElementById('abnormalDim').checked) {
+            totalPercentage += 15;
+            details.push({ label: "أبعاد شاذة / ارتفاع > 4م", value: "+15%" });
+        }
+        if (document.getElementById('craneNeeded').checked) {
+            totalPercentage += 20;
+            details.push({ label: "حمولات تحتاج لروافع", value: "+20%" });
+        }
+
+        // الحاويات (المادة 9)[span_33](start_span)[span_33](end_span)
+        let containerAddonCost = 0;
+        const containerType = document.getElementById('containerType').value;
+        if (containerType === 'standard') {
+            containerAddonCost = 6.04 * weight;
+            details.push({ label: "إضافة حاوية عادية (6.04 ل.س/طن)", value: containerAddonCost.toFixed(2) + " ل.س" });
+        } else if (containerType === 'standardReturn') {
+            containerAddonCost = 6.04 * weight;
+            totalPercentage += 50;
+            details.push({ label: "إضافة حاوية عادية مع إعادة فارغ", value: "+6.04 ل.س/طن و +50% للأجور" });
+        } else if (containerType === 'oversized') {
+            containerAddonCost = 7.56 * weight;
+            details.push({ label: "إضافة حاوية تتجاوز الأبعاد (7.56 ل.س/طن)", value: containerAddonCost.toFixed(2) + " ل.س" });
+        }
+
+        // تطبيق النسب المئوية الإضافية على الأجرة الأساسية
+        let percentageCost = baseTotal * (totalPercentage / 100);
+        let subTotal = baseTotal + percentageCost + containerAddonCost;
+
+        if (totalPercentage > 0) {
+            details.push({ label: "مجموع النسب المئوية المضافة", value: `+${totalPercentage}% (${percentageCost.toFixed(2)} ل.س)` });
+        }
+
+        // 3. إضافة بدل التعطيل (المادة 13)[span_34](start_span)[span_34](end_span)
+        let delayCost = 0;
+        if (distance > 50) {
+            const delayDays = parseInt(document.getElementById('delayDays').value) || 0;
+            if (delayDays > 0) {
+                delayCost = delayDays * 5292;
+                details.push({ label: `بدل تعطيل يومي (${delayDays} يوم)`, value: delayCost.toFixed(2) + " ل.س" });
+            }
+        } else {
+            const delayHours = Math.min(parseInt(document.getElementById('delayHours').value) || 0, 4);
+            if (delayHours > 0) {
+                delayCost = delayHours * 9.07;
+                details.push({ label: `بدل ساعات التوقف (${delayHours} ساعة)`, value: delayCost.toFixed(2) + " ل.س" });
+            }
+        }
+
+        let grandTotal = subTotal + delayCost;
+
+        // عرض النتائج
+        document.getElementById('totalPrice').innerText = "إجمالي الأجرة المستحقة: " + grandTotal.toLocaleString('ar-SY', {maximumFractionDigits: 2}) + " ل.س";
+        
+        let detailsHtml = "";
+        details.forEach(item => {
+            detailsHtml += `<li><span>${item.label}</span><b>${item.value}</b></li>`;
+        });
+        document.getElementById('detailsList').innerHTML = detailsHtml;
+        document.getElementById('resultBox').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
